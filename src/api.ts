@@ -5,15 +5,26 @@ import * as http from 'http';
 
 import config from './config';
 
+import basicInteractionHandler from './ai/basicinteraction';
+
 class NlpApp {
 
     server: restify.Server;
 
-    test() {
-
+    basicChat(bot: botbuilder.UniversalBot) {
+        bot.dialog('/', function (session) {
+            var message = session.message;
+            console.log(message);
+            basicInteractionHandler.questionClassifier(message).then((answer) => {
+                console.log(answer);
+                session.send(answer);
+            }).catch((rejectMsg) => {
+                session.send(rejectMsg);
+            })
+        });
     }
 
-    laodBot() {
+    loadBot() {
         return new Promise((resolve, reject) => {
 
             var connector = new botbuilder.ChatConnector({
@@ -24,9 +35,7 @@ class NlpApp {
             var bot = new botbuilder.UniversalBot(connector);
             this.server.post('/api/messages', connector.listen());
 
-            bot.dialog('/', function (session) {
-                session.send("Hello World!");
-            });
+            this.basicChat(bot)
             resolve();
         })
 
@@ -40,7 +49,7 @@ class NlpApp {
                     process.exit(2);
                 }
                 console.log('Bot App initializing at port: ', this.server.url);
-                this.laodBot().then(() => {
+                this.loadBot().then(() => {
                     resolve();
                 })
             });
