@@ -7,40 +7,76 @@ class BasicInteraction {
 
     questionClassifier(message: botbuilder.IMessage): Promise<string> {
         return new Promise((resolve, reject) => {
-            var asked: string;
+            var question: string;
             var target: string;
-            basicIdentifier.questions.forEach((question) => {
-                if (message.text.includes(question)) {
-                    asked = question;
-                    basicIdentifier.credentials.forEach((credential) => {
-                        if (message.text.includes(credential)) {
-                            this.botCredentialQuestion(asked, message).then((credentialAnswer) => {
-                                resolve(credentialAnswer);
-                            }).catch(() => {
-                                this.dailyQuestion(question, message).then((dailyAnswer) => {
-                                    resolve(dailyAnswer);
-                                }).catch(() => {
-                                    reject('I could not understand that daily.');
-                                })
-                            })
-                        } else {
-                            reject('I could not understand that credential.');
-                        }
-                    })
+            var credential: string;
+            console.log(message.text);
+            for (var i = 0; i < basicIdentifier.greetings.length; i++) {
+                if (message.text.includes(basicIdentifier.greetings[i])) {
+                    resolve(`Hello! I am ${botCredentials.name}`);
+                    break;
                 }
-                reject('I could not understand that any.');
-            })
+            }
+
+            for (var j = 0; j < basicIdentifier.questions.length; j++) {
+                if (message.text.includes(basicIdentifier.questions[j])) {
+                    question = basicIdentifier.questions[j];
+                    break;
+                }
+            }
+
+            for (var k = 0; k < basicIdentifier.botRelatedKeywords.length; k++) {
+                if (message.text.includes(basicIdentifier.botRelatedKeywords[k])) {
+                    target = 'bot';
+                    break;
+                } else if (message.text.includes(basicIdentifier.speakerRelatedKeywords[k])) {
+                    target = 'user';
+                    break;
+                } else {
+                    target = 'none';
+                }
+            }
+
+            for (var l = 0; l < basicIdentifier.botRelatedKeywords.length; l++) {
+                if (message.text.includes(basicIdentifier.credentials[l])) {
+                    credential = basicIdentifier.credentials[l];
+                    break;
+                }
+            }
+
+            if (target == 'bot' || credential.length) {
+                this.botCredentialQuestion(question, message).then((credentialAnswer) => {
+                    resolve(credentialAnswer);
+                    return;
+                }).catch(() => {
+                    reject('I could not understand that.');
+                    return;
+                })
+            }
+
+            if (target == 'none') {
+                this.dailyQuestion(question, message).then((dailyAnswer) => {
+                    resolve(dailyAnswer);
+                    return;
+                }).catch(() => {
+                    reject('I could not understand that.');
+                    return;
+                })
+            }
+
         })
     }
 
     private botCredentialQuestion(question: string, message: botbuilder.IMessage): Promise<string> {
         return new Promise((resolve, reject) => {
-            if (message.text.includes('age')) {
+            if (message.text.includes('old') || message.text.includes('age')) {
                 resolve(botCredentials.age);
-            } else if (message.text.includes('name')) {
+            } else if (message.text.includes('name') || message.text.includes('who')) {
                 resolve(botCredentials.name);
-            } else if (message.text.includes('born')) {
+            } else if (question == 'when' || message.text.includes('born')) {
                 resolve(botCredentials.born);
+            } else if (question == 'where' || message.text.includes('born')) {
+                resolve(botCredentials.birthplace);
             } else {
                 reject();
             }
@@ -48,7 +84,7 @@ class BasicInteraction {
 
     }
 
-    dailyQuestion(question: string, message: botbuilder.IMessage): Promise<string> {
+    private dailyQuestion(question: string, message: botbuilder.IMessage): Promise<string> {
         return new Promise((resolve, reject) => {
             if (question == 'what' && message.text.includes('time')) {
                 var time = moment.utc().format('HH:mm:ss');

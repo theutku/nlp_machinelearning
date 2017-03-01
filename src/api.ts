@@ -17,8 +17,9 @@ class NlpApp {
             console.log(message);
             basicInteractionHandler.questionClassifier(message).then((answer) => {
                 console.log(answer);
-                session.send(answer);
+                session.send(answer.toString());
             }).catch((rejectMsg) => {
+                console.log(rejectMsg);
                 session.send(rejectMsg);
             })
         });

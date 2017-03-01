@@ -4,6 +4,7 @@ class BasicInteractionIdentifier {
 
     questions: [string];
     credentials: [string];
+    greetings: [string];
 
     initBasicBot() {
         this.botRelatedKeywords = ['your', 'you', 'yours', 'yourself']
@@ -21,11 +22,16 @@ class BasicInteractionIdentifier {
         this.credentials = ['age', 'name', 'sex', 'born', 'birthplace', 'male', 'female'];
     }
 
+    initGreetings() {
+        this.greetings = ['hello', 'hi', 'sup', 'hey'];
+    }
+
     constructor() {
         this.initBasicBot();
         this.initBasicSpeaker();
         this.initQuestions();
         this.initCredentials();
+        this.initGreetings();
     }
 }
 
