@@ -10,19 +10,50 @@ import basicInteractionHandler from './ai/basicinteraction';
 class NlpApp {
 
     server: restify.Server;
+    bot: botbuilder.UniversalBot;
+    intents: botbuilder.IntentDialog;
 
-    basicChat(bot: botbuilder.UniversalBot) {
-        bot.dialog('/', function (session) {
-            var message = session.message;
-            console.log(message);
-            basicInteractionHandler.questionClassifier(message).then((answer) => {
-                console.log(answer);
-                session.send(answer.toString());
-            }).catch((rejectMsg) => {
-                console.log(rejectMsg);
-                session.send(rejectMsg);
-            })
-        });
+    next: Function;
+
+    basicChat() {
+        this.bot.dialog('/', [
+            function (session) {
+                var message = session.message;
+
+                if (message.text.includes('request')) {
+                    session.beginDialog('/prompt');
+                } else {
+                    this.next();
+                }
+            },
+            function (session) {
+                var message = session.message;
+
+                basicInteractionHandler.questionClassifier(message).then((answer) => {
+                    session.send(answer.toString());
+                }).catch((rejectMsg) => {
+                    session.send(rejectMsg);
+                })
+            }
+        ]);
+
+        this.bot.dialog('/prompt', [
+            function (session) {
+                botbuilder.Prompts.confirm(session, "Are you sure you would like to continue?");
+            },
+            function (session, results: botbuilder.IPromptConfirmResult) {
+                if (results.response) {
+                    session.endDialog('Done as you wished');
+                } else {
+                    session.endDialog('Cancelled.');
+                }
+            }
+        ])
+
+    }
+
+    basicIntents() {
+        this.intents.matches(/^version/i, botbuilder.DialogAction.send('Bot version 1.2'));
     }
 
     loadBot() {
@@ -33,10 +64,11 @@ class NlpApp {
                 appPassword: ''
             });
 
-            var bot = new botbuilder.UniversalBot(connector);
+            this.bot = new botbuilder.UniversalBot(connector);
+            this.intents = new botbuilder.IntentDialog();
             this.server.post('/api/messages', connector.listen());
-
-            this.basicChat(bot);
+            this.basicChat();
+            // this.basicIntents();
             resolve();
         })
 

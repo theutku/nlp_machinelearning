@@ -3,6 +3,7 @@ import * as botbuilder from 'botbuilder';
 import botCredentials from '../credentials/bot';
 import * as moment from 'moment';
 
+
 class BasicInteraction {
 
     questionClassifier(message: botbuilder.IMessage): Promise<string> {
@@ -11,6 +12,7 @@ class BasicInteraction {
             var target: string;
             var credential: string;
             console.log(message.text);
+
             for (var i = 0; i < basicIdentifier.greetings.length; i++) {
                 if (message.text.includes(basicIdentifier.greetings[i])) {
                     resolve(`Hello! I am ${botCredentials.name}`);
