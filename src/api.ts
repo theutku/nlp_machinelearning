@@ -36,7 +36,7 @@ class NlpApp {
             var bot = new botbuilder.UniversalBot(connector);
             this.server.post('/api/messages', connector.listen());
 
-            this.basicChat(bot)
+            this.basicChat(bot);
             resolve();
         })
 
