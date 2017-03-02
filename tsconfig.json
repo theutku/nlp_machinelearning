@@ -3,7 +3,7 @@
         "watch": true,
         "declaration": false,
         "listFiles": false,
-        "target": "ES6",
+        "target": "ES5",
         "module": "commonjs",
         "noEmitOnError": false,
         "noImplicitAny": true,

@@ -4,9 +4,16 @@ var ts = require('gulp-typescript');
 var tsProject = ts.createProject('tsconfig.json');
 
 gulp.task('tsc', function () {
+    var tsProject = ts.createProject('tsconfig.json', {
+        watch: true
+    });
     var tsResult = tsProject.src()
         .pipe(tsProject());
     var result = tsResult.js.pipe(gulp.dest('bin'));
 
     return result;
 });
+
+gulp.task('server.dev', ['server.tsc'], function () {
+    gulp.watch('./src/**/*.ts', ['tsc']);
+})
