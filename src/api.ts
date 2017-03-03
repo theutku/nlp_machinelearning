@@ -5,56 +5,12 @@ import * as http from 'http';
 
 import config from './config';
 
-import basicInteractionHandler from './ai/basicinteraction';
+import BasicIntents from './intents/basic';
 
 class NlpApp {
 
     server: restify.Server;
     bot: botbuilder.UniversalBot;
-    intents: botbuilder.IntentDialog;
-
-    next: Function;
-
-    basicChat() {
-        this.bot.dialog('/', [
-            function (session) {
-                var message = session.message;
-
-                if (message.text.includes('request')) {
-                    session.beginDialog('/prompt');
-                } else {
-                    this.next();
-                }
-            },
-            function (session) {
-                var message = session.message;
-
-                basicInteractionHandler.questionClassifier(message).then((answer) => {
-                    session.send(answer.toString());
-                }).catch((rejectMsg) => {
-                    session.send(rejectMsg);
-                })
-            }
-        ]);
-
-        this.bot.dialog('/prompt', [
-            function (session) {
-                botbuilder.Prompts.confirm(session, "Are you sure you would like to continue?");
-            },
-            function (session, results: botbuilder.IPromptConfirmResult) {
-                if (results.response) {
-                    session.endDialog('Done as you wished');
-                } else {
-                    session.endDialog('Cancelled.');
-                }
-            }
-        ])
-
-    }
-
-    basicIntents() {
-        this.intents.matches(/^version/i, botbuilder.DialogAction.send('Bot version 1.2'));
-    }
 
     loadBot() {
         return new Promise((resolve, reject) => {
@@ -65,14 +21,14 @@ class NlpApp {
             });
 
             this.bot = new botbuilder.UniversalBot(connector);
-            this.intents = new botbuilder.IntentDialog();
             this.server.post('/api/messages', connector.listen());
-            this.basicChat();
-            // this.basicIntents();
+            // basicSession(this.bot).basicChat();
+            BasicIntents(this.bot).loadBasicIntents();
             resolve();
         })
 
     }
+
 
     init() {
         return new Promise((resolve, reject) => {

@@ -1,0 +1,39 @@
+{
+    // Use IntelliSense to learn about possible Node.js debug attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "args": [
+                "--start",
+                "local"
+            ],
+            "cwd": "${workspaceRoot}",
+            "env": {
+                "PORT": "3978"
+            },
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "runtimeExecutable": null,
+            "preLaunchTask": "tsc",
+            "type": "node",
+            "request": "launch",
+            "name": "Local",
+            "program": "${workspaceRoot}/bin/app.js",
+            "sourceMaps": true,
+            "stopOnEntry": false
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "name": "GULP",
+            "program": "${workspaceRoot}/node_modules/.bin/gulp",
+            "args": [
+                "tsc"
+            ]
+        }
+    ]
+}
