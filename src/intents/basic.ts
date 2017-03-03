@@ -65,10 +65,10 @@ class BasicIntents {
 
         this.bot.dialog('/theraphyidentifier', [
             (session) => {
-                botbuilder.Prompts.text(session, 'Which service would you like to receive? Therapy | Personal Trainer | Dietitian ?');
+                botbuilder.Prompts.choice(session, 'Which service would you like to receive?', 'Therapist | Personal Trainer | Dietitian');
             },
-            (session: botbuilder.Session, results: botbuilder.IPromptResult<string>) => {
-                session.userData.request = results.response;
+            (session: botbuilder.Session, results: botbuilder.IPromptChoiceResult) => {
+                session.userData.request = results.response.entity;
                 session.send(`Great! I will arrange a ${session.userData.request} for you, ${session.userData.name}!`);
                 session.endDialog();
             }
