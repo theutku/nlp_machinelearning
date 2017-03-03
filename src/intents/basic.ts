@@ -84,7 +84,7 @@ class BasicIntents {
                 } else {
                     var schedule = new Date();
                     session.send(`As you wish! Please note that your chat is on ${schedule}, ${session.userData.name}!`);
-                    session.endConversation();
+                    session.endConversation('Have a nice day!');
                 }
             }
         ])
