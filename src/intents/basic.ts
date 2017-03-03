@@ -6,8 +6,9 @@ class BasicIntents {
 
     loadBasicIntents() {
         this.bot.dialog('/', this.intents);
+        this.theraphyIntent();
 
-        this.intents.matches(/^change name/i, [
+        this.intents.matches(/^change my name/i, [
             function (session) {
                 session.beginDialog('/profile');
             },
@@ -38,6 +39,32 @@ class BasicIntents {
                 session.endDialog();
             }
         ]);
+    }
+
+    theraphyIntent() {
+        this.intents.matches(/^theraphy/i, [
+            (session) => {
+                if (!session.userData.name) {
+                    session.beginDialog('/profile')
+                }
+                else {
+                    session.beginDialog('/theraphyidentifier')
+                }
+            },
+            (session: botbuilder.Session, results: botbuilder.IPromptResult<string>) => {
+                session.send(`Great! I will arrange a ${session.userData.request} for you, ${session.userData.name}!`);
+            }
+        ])
+
+        this.bot.dialog('/theraphyidentifier', [
+            (session) => {
+                botbuilder.Prompts.text(session, 'Which service would you like to receive? Therapy | Personal Trainer | Dietitian ?');
+            },
+            (session: botbuilder.Session, results: botbuilder.IPromptResult<string>) => {
+                session.userData.request = results.response;
+                session.endDialog();
+            }
+        ])
     }
 
     constructor(public bot: botbuilder.UniversalBot) {
