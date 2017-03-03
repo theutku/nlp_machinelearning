@@ -26,7 +26,7 @@ class BasicIntents {
             },
             function (session, results) {
                 session.send('Welcome %s!', session.userData.name);
-                botbuilder.Prompts.confirm(session, 'Would you like to talk to a consutant?')
+                botbuilder.Prompts.confirm(session, 'Would you like to schedule an appointment with a consultant?')
             },
             function (session, results) {
                 if (results.response) {
@@ -43,7 +43,7 @@ class BasicIntents {
             },
             function (session, results) {
                 session.userData.name = results.response;
-                session.endDialog();
+                session.endDialog('nice meeting you %s!', session.userData.name);
             }
         ]);
     }
@@ -69,8 +69,34 @@ class BasicIntents {
             },
             (session: botbuilder.Session, results: botbuilder.IPromptChoiceResult) => {
                 session.userData.request = results.response.entity;
-                session.send(`Great! I will arrange a ${session.userData.request} for you, ${session.userData.name}!`);
-                session.endDialog();
+                session.send(`Great! I will schedule a ${session.userData.request} for you, ${session.userData.name}!`);
+                session.beginDialog('/promptemail');
+            }
+        ])
+
+        this.bot.dialog('/promptemail', [
+            (session) => {
+                botbuilder.Prompts.confirm(session, 'Would you like me to send the details of your appointment to your e - mail address?');
+            },
+            (session: botbuilder.Session, results: botbuilder.IPromptConfirmResult) => {
+                if (results.response) {
+                    session.beginDialog('/getemail');
+                } else {
+                    var schedule = new Date();
+                    session.send(`As you wish! Please note that your chat is on ${schedule}, ${session.userData.name}!`);
+                    session.endConversation();
+                }
+            }
+        ])
+
+        this.bot.dialog('/getemail', [
+            (session) => {
+                botbuilder.Prompts.text(session, 'Can I get your e - mail address?');
+            },
+            (session: botbuilder.Session, results: botbuilder.IPromptTextResult) => {
+                session.userData.email = results.response
+                session.send(`All Done! I have sent details of your appointment to ${session.userData.email}, ${session.userData.name}!`);
+                session.endConversation();
             }
         ])
     }
