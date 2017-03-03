@@ -26,13 +26,13 @@ class BasicIntents {
             },
             function (session, results) {
                 session.send('Welcome %s!', session.userData.name);
-                botbuilder.Prompts.confirm(session, 'Would you like to receive a service?')
+                botbuilder.Prompts.confirm(session, 'Would you like to talk to a consutant?')
             },
             function (session, results) {
                 if (results.response) {
                     session.beginDialog('/theraphyidentifier');
                 } else {
-                    session.send('Sure, as you wish!');
+                    session.endDialog('Sure, as you wish!');
                 }
             }
         ]);
@@ -61,11 +61,11 @@ class BasicIntents {
             (session: botbuilder.Session, results: botbuilder.IPromptResult<string>) => {
                 session.endDialog();
             }
-        ])
+        ]);
 
         this.bot.dialog('/theraphyidentifier', [
             (session) => {
-                botbuilder.Prompts.choice(session, 'Which service would you like to receive?', 'Therapist | Personal Trainer | Dietitian');
+                botbuilder.Prompts.choice(session, 'Which consultant would you like to consult to?', 'Therapist | Personal Trainer | Dietitian');
             },
             (session: botbuilder.Session, results: botbuilder.IPromptChoiceResult) => {
                 session.userData.request = results.response.entity;
