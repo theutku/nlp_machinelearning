@@ -6,7 +6,6 @@ class BasicIntents {
 
     loadBasicIntents() {
         this.bot.dialog('/', this.intents);
-        this.theraphyIntent();
 
         this.intents.matches(/^change my name/i, [
             function (session) {
@@ -26,7 +25,15 @@ class BasicIntents {
                 }
             },
             function (session, results) {
-                session.send('Welcome back %s!', session.userData.name);
+                session.send('Welcome %s!', session.userData.name);
+                botbuilder.Prompts.confirm(session, 'Would you like to receive a service?')
+            },
+            function (session, results) {
+                if (results.response) {
+                    session.beginDialog('/theraphyidentifier');
+                } else {
+                    session.send('Sure, as you wish!');
+                }
             }
         ]);
 
@@ -41,7 +48,7 @@ class BasicIntents {
         ]);
     }
 
-    theraphyIntent() {
+    loadTheraphyIntents() {
         this.intents.matches(/^theraphy/i, [
             (session) => {
                 if (!session.userData.name) {
@@ -52,7 +59,7 @@ class BasicIntents {
                 }
             },
             (session: botbuilder.Session, results: botbuilder.IPromptResult<string>) => {
-                session.send(`Great! I will arrange a ${session.userData.request} for you, ${session.userData.name}!`);
+                session.endDialog();
             }
         ])
 
@@ -62,6 +69,7 @@ class BasicIntents {
             },
             (session: botbuilder.Session, results: botbuilder.IPromptResult<string>) => {
                 session.userData.request = results.response;
+                session.send(`Great! I will arrange a ${session.userData.request} for you, ${session.userData.name}!`);
                 session.endDialog();
             }
         ])

@@ -22,8 +22,15 @@ class NlpApp {
 
             this.bot = new botbuilder.UniversalBot(connector);
             this.server.post('/api/messages', connector.listen());
-            // basicSession(this.bot).basicChat();
+            resolve();
+        })
+
+    }
+
+    loadIntents() {
+        return new Promise((resolve, reject) => {
             BasicIntents(this.bot).loadBasicIntents();
+            BasicIntents(this.bot).loadTheraphyIntents();
             resolve();
         })
 
@@ -37,9 +44,13 @@ class NlpApp {
                     console.log(err);
                     process.exit(2);
                 }
-                console.log('Bot App initializing at port: ', this.server.url);
+                console.log('Bot App started listening at port: ', this.server.url, ' ...');
                 this.loadBot().then(() => {
-                    resolve();
+                    console.log('Bot initialized...');
+                    this.loadIntents().then(() => {
+                        console.log('Intents initialized...');
+                        resolve();
+                    })
                 })
             });
 
