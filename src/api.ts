@@ -27,10 +27,17 @@ class NlpApp {
 
     }
 
+    loadLuis() {
+        // var recognizer = new botbuilder.LuisRecognizer('https://westus.api.cognitive.microsoft.com/luis/v2.0/apps/3b048389-13ea-4709-81d8-8000355acac4?subscription-key=2658947utb56901shuorls981068yrbs&staging=true&verbose=true&spellCheck=true&q=')
+        // this.bot.recognizer(recognizer);
+    }
+
     loadIntents() {
         return new Promise((resolve, reject) => {
-            BasicIntents(this.bot).loadBasicIntents();
-            BasicIntents(this.bot).loadTheraphyIntents();
+            // BasicIntents(this.bot).loadBasicIntents();
+            // BasicIntents(this.bot).loadTheraphyIntents();
+            BasicIntents(this.bot).testIntent();
+            BasicIntents(this.bot).builtIn();
             resolve();
         })
 
@@ -47,6 +54,7 @@ class NlpApp {
                 console.log('Bot App started listening at port: ', this.server.url, ' ...');
                 this.loadBot().then(() => {
                     console.log('Bot initialized...');
+                    this.loadLuis();
                     this.loadIntents().then(() => {
                         console.log('Intents initialized...');
                         resolve();
