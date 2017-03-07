@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "watch": false,
+        "watch": true,
         "declaration": false,
         "listFiles": false,
         "target": "ES5",
