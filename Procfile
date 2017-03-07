@@ -1,1 +1,1 @@
-web: gulp tsc && node ./bin/app
+web: tsc && node ./bin/app
